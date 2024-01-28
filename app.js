@@ -1,4 +1,5 @@
 // Globals
+const todoList = document.getElementById('todo-list')
 let todos = []
 let users = []
 
@@ -6,8 +7,29 @@ let users = []
 document.addEventListener('DOMContentLoaded', initApp)
 
 // Basic Logic
-function printTodo({id, userId, title, complite}) {
+function getUserName(userId) {
+  const user = users.find(u => u.id === userId)
+  return user.name
+}
 
+function printTodo({id, userId, title, complited}) {
+  const li = document.createElement('li')
+  li.className= "todo-item"
+  li.dataset.id = id
+  li.innerHTML = `<span>${title} <i>by</i> <b>${getUserName(userId)}</b></span>`
+
+  const status = document.createElement("input")
+  status.type = "checkbox"
+  status.checked = complited
+
+  const close = document.createElement("span")
+  close.innerHTML = "&times;"
+  close.className = "close"
+
+  li.prepend(status)
+  li.append(close)
+
+  todoList.prepend(li)
 }
 
 // Events Logic
@@ -16,6 +38,7 @@ function initApp() {
     [todos, users] = values
 
     // Отправить в разметку
+    todos.forEach((todo) => printTodo(todo))
 
   })
 }
