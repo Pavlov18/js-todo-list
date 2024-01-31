@@ -24,7 +24,7 @@ function createUserOption(user) {
 }
 
 
-function printTodo({id, userId, title, complited}) {
+function printTodo({id, userId, title, completed}) {
   const li = document.createElement('li')
   li.className= "todo-item"
   li.dataset.id = id
@@ -32,7 +32,10 @@ function printTodo({id, userId, title, complited}) {
 
   const status = document.createElement("input")
   status.type = "checkbox"
-  status.checked = complited
+  status.checked = completed
+  
+  status.addEventListener('change', handleTodoChange)
+ 
 
   const close = document.createElement("span")
   close.innerHTML = "&times;"
@@ -67,6 +70,13 @@ function handleSubmit(event) {
 
 }
 
+function handleTodoChange() {
+  const todoId = this.parentElement.dataset.id
+  const completed = this.checked
+  toogleTodoComplite(todoId, completed)
+
+}
+
 // Async logic
 async function getAllTodos(){
   const response = await fetch('https://jsonplaceholder.typicode.com/posts')
@@ -93,3 +103,19 @@ async function createTodo(todo) {
   const newTodo = await response.json()
   printTodo(newTodo)
 }
+
+// Выполенние задачи
+async function toogleTodoComplite(todoId, completed) {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({completed}),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }
+  )
+  const data = await response.json();
+  console.log(data);
+}
+
