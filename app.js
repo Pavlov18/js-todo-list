@@ -1,3 +1,4 @@
+(function() {
 // Globals
 const todoList = document.getElementById('todo-list')
 const userSelect = document.getElementById('user-todo')
@@ -183,3 +184,4 @@ async function deleteTodo(todoId) {
     alertError(error)
   }
 }
+})()
