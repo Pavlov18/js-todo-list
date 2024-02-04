@@ -9,7 +9,7 @@ let users = []
 document.addEventListener('DOMContentLoaded', initApp)
 form.addEventListener('submit', handleSubmit)
 
-// Basic Logic
+// Base Logic
 function getUserName(userId) {
   const user = users.find(u => u.id === userId)
   return user.name
@@ -40,11 +40,22 @@ function printTodo({id, userId, title, completed}) {
   const close = document.createElement("span")
   close.innerHTML = "&times;"
   close.className = "close"
+  close.addEventListener('click', handleClose)
 
   li.prepend(status)
   li.append(close)
 
   todoList.prepend(li)
+}
+
+function removeTodo(todoId) {
+  todos = todos.filter(todo => todo.id !== todoId)
+
+  const todo = todoList.querySelector(`[data-id="${todoId}"]`)
+  todo.querySelector('input').removeEventListener('change', handleTodoChange)
+  todo.querySelector('.close').removeEventListener('click', handleClose)
+
+  todo.remove()
 }
 
 // Events Logic
@@ -77,6 +88,11 @@ function handleTodoChange() {
   const completed = this.checked
   toogleTodoComplite(todoId, completed)
 
+}
+
+function handleClose() {
+  const todoId = this.parentElement.dataset.id
+  deleteTodo(todoId)
 }
 
 // Async logic
@@ -119,3 +135,17 @@ async function toogleTodoComplite(todoId, completed) {
   console.log(data);
 }
 
+async function deleteTodo(todoId) {
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/todos/${todoId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }
+  )
+  if (response.ok) {
+    //romoveTodo from DOM
+    removeTodo(todoId)
+  }
+}
